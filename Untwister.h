@@ -1,5 +1,5 @@
 /*
-    Copyright Dan Petro, 2014
+    Copyright Dan Petro, moloch 2014
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -45,6 +45,7 @@ public:
     Untwister(unsigned int observationSize);
     virtual ~Untwister();
 
+    std::vector<Seed> bruteforce();
     std::vector<Seed> bruteforce(uint32_t lowerBoundSeed, uint32_t upperBoundSeed);
 
     bool canInferState();

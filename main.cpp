@@ -160,7 +160,8 @@ bool inferenceAttack(Untwister *untwister)
     else
     {
         std::cout << WARN << "Not enough observed values to perform state inference, "
-                  << "try again with more than " << untwister->getStateSize() << " values." << std::endl;
+                  << "try again with more than " << untwister->getStateSize() << " values."
+                  << std::endl;
         return false;
     }
 }

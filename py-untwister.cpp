@@ -42,7 +42,7 @@ void PythonInit()
 
 /* Find a seed */
 list BruteforceAttack(std::string prng, list observations, unsigned int threads, float minimumConfidence,
-    uint32_t lowerBoundSeed, uint32_t upperBoundSeed, uint32_t depth)
+                      uint32_t lowerBoundSeed, uint32_t upperBoundSeed, uint32_t depth)
 {
     Untwister *untwister = new Untwister(len(observations));
     if(!untwister->isSupportedPRNG(prng))

@@ -1,5 +1,5 @@
 /*
-    Copyright Dan Petro, 2014
+    Copyright Dan Petro, moloch 2014
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -55,10 +55,16 @@ Untwister::~Untwister()
     delete m_status;
 }
 
+/* Default to the entire 32-bit keyspace */
+std::vector<Seed> Untwister::bruteforce()
+{
+    this->bruteforce(0, UINT_MAX);
+}
+
 /*
  isStarting: The call to bruteforce() has occured but all workers threads have not started yet
   isRunning: All threads have started and it is safe to call getStatus() externally
-isCompleted: The operation has completed and all worker threads have joined
+isCompleted: Signals all threads to join, the seed has been found early.
 */
 std::vector<Seed> Untwister::bruteforce(uint32_t lowerBoundSeed, uint32_t upperBoundSeed)
 {
