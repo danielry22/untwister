@@ -34,6 +34,7 @@
 typedef std::pair<uint32_t, double> Seed;
 typedef std::pair<std::vector<uint32_t>, double> State;
 
+static const std::string VERSION = "0.2.0";
 static const uint32_t DEFAULT_DEPTH = 1000;
 static const double DEFAULT_MIN_CONFIDENCE = 100.0;
 
@@ -51,19 +52,19 @@ public:
     State inferState();
     uint32_t getStateSize();
 
-    std::vector<std::string> getSupportedPRNGs();
+    static std::vector<std::string> getSupportedPRNGs();
     void setPRNG(std::string prng);
     void setPRNG(char *prng);
     std::string getPRNG();
-    bool isSupportedPRNG(std::string prng);
-    bool isSupportedPRNG(char* prng);
+    static bool isSupportedPRNG(std::string prng);
+    static bool isSupportedPRNG(char* prng);
 
     void setMinConfidence(double minConfidence);
     double getMinConfidence();
     void setDepth(uint32_t depth);
     uint32_t getDepth();
     void setThreads(unsigned int threads);
-    unsigned int getThreads();
+    static unsigned int getThreads();
     void addObservedOutput(uint32_t observedOutput);
     std::vector<uint32_t>* getObservedOutputs();
     std::vector<uint32_t>* getStatus();
@@ -72,6 +73,8 @@ public:
 
     std::vector<uint32_t> generateSampleFromSeed(uint32_t seed);
     std::vector<uint32_t> generateSampleFromState();
+
+    const std::string Untwister::getVersion();
 
 private:
     unsigned int m_threads;

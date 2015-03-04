@@ -37,7 +37,7 @@ using std::chrono::steady_clock;
 static const unsigned int ONE_YEAR = 31536000;
 
 
-void Usage(Untwister *untwister)
+void Usage()
 {
     std::cout << BOLD << "Untwister" << RESET << " - Recover PRNG seeds from observed values." << std::endl;
     std::cout << "\t-i <input_file> [-d <depth> ] [-r <prng>] [-g <seed>] [-t <threads>] [-c <confidence>]\n" << std::endl;
@@ -48,22 +48,19 @@ void Usage(Untwister *untwister)
     std::cout << "\t\tChoosing a higher depth value will make brute forcing take longer (linearly), but is" << std::endl;
     std::cout << "\t\trequired for cases where the generator has been used many times already." << std::endl;
     std::cout << "\t-r <prng>\n\t\tThe PRNG algorithm to use. Supported PRNG algorithms:" << std::endl;
-    std::vector<std::string> names = untwister->getSupportedPRNGs();
-    for (unsigned int index = 0; index < names.size(); ++index)
+    std::vector<std::string> *names = Untwister.getSupportedPRNGs();
+    for (unsigned int index = 0; index < names->size(); ++index)
     {
-        std::cout << "\t\t" << BOLD << " * " << RESET << names[index];
-        if (index == 0)
-        {
-            std::cout << " (default)";
-        }
+        std::cout << "\t\t" << BOLD << " [*] " << RESET << names->at(index);
         std::cout << std::endl;
     }
+    delete names;
     std::cout << "\t-u\n\t\tUse bruteforce, but only for unix timestamp values within a range of +/- 1 " << std::endl;
     std::cout << "\t-b\n\t\tAlways bruteforce, even if state inference attack is successful" << std::endl;
     std::cout << "\t\tyear from the current time." << std::endl;
     std::cout << "\t-g <seed>\n\t\tGenerate a test set of random numbers from the given seed (at a random depth)" << std::endl;
     std::cout << "\t-c <confidence>\n\t\tSet the minimum confidence percentage to report" << std::endl;
-    std::cout << "\t-t <threads>\n\t\tSpawn this many threads (default is " << untwister->getThreads() << ")" << std::endl;
+    std::cout << "\t-t <threads>\n\t\tSpawn this many threads (default is " << std::thread::hardware_concurrency() << ")" << std::endl;
     std::cout << std::endl;
 }
 
@@ -116,19 +113,19 @@ void DisplayProgress(Untwister *untwister, uint32_t totalWork)
                   << " Progress: " << std::fixed<< percent << '%'
                   << "  [" << sum << " / " << totalWork << "]"
                   << "  ~" << seedsPerSec << "/sec ";
-        if(yearsLeft > 0)
+        if (yearsLeft > 0)
         {
             std::cout << " " << yearsLeft << " years";
         }
-        if(daysLeft > 0)
+        if (daysLeft > 0)
         {
             std::cout << " " << daysLeft << " days";
         }
-        if(hoursLeft > 0)
+        if (hoursLeft > 0)
         {
             std::cout << " " << hoursLeft << " hours";
         }
-        if(minutesLeft > 0)
+        if (minutesLeft > 0)
         {
             std::cout << " " << minutesLeft << " minutes";
         }
@@ -202,7 +199,7 @@ int main(int argc, char *argv[])
     bool bruteforce = false;
     Untwister *untwister = new Untwister();
 
-    while ((c = getopt(argc, argv, "d:i:g:t:r:c:ubh")) != -1)
+    while ((c = getopt(argc, argv, "d:i:g:t:r:c:ubhv")) != -1)
     {
         switch (c)
         {
@@ -298,6 +295,12 @@ int main(int argc, char *argv[])
             case 'h':
             {
                 Usage(untwister);
+                delete untwister;
+                return EXIT_SUCCESS;
+            }
+            case 'v':
+            {
+                std::cout << "Untwister v" << untwister.getVersion() << std::endl;
                 delete untwister;
                 return EXIT_SUCCESS;
             }

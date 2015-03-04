@@ -18,32 +18,38 @@
 #include "Untwister.h"
 
 
-Untwister::Untwister()
+Untwister::Untwister(std::string prng)
 {
-    m_isCompleted = new std::atomic<bool>(false);
-    m_isRunning = new std::atomic<bool>(false);
-    m_isStarting = new std::atomic<bool>(false);
-    m_observedOutputs = new std::vector<uint32_t>;
-    m_depth = DEFAULT_DEPTH;
-    m_minConfidence = DEFAULT_MIN_CONFIDENCE;
-    m_threads = std::thread::hardware_concurrency();
-    m_prng = "glibc-rand";
-    m_answers = new std::vector<std::vector<Seed>* >(m_threads);
-    m_status = new std::vector<uint32_t>(m_threads);
+    if (isSupportedPRNG(prng))
+    {
+        m_isCompleted = new std::atomic<bool>(false);
+        m_isRunning = new std::atomic<bool>(false);
+        m_isStarting = new std::atomic<bool>(false);
+        m_observedOutputs = new std::vector<uint32_t>;
+        m_depth = DEFAULT_DEPTH;
+        m_minConfidence = DEFAULT_MIN_CONFIDENCE;
+        m_threads = std::thread::hardware_concurrency();
+        m_prng = prng;
+        m_answers = new std::vector<std::vector<Seed>* >(m_threads);
+        m_status = new std::vector<uint32_t>(m_threads);
+    }
 }
 
-Untwister::Untwister(unsigned int observationSize)
+Untwister::Untwister(std::string prng, unsigned int observationSize)
 {
-    m_isCompleted = new std::atomic<bool>(false);
-    m_isRunning = new std::atomic<bool>(false);
-    m_isStarting = new std::atomic<bool>(false);
-    m_observedOutputs = new std::vector<uint32_t>(observationSize);
-    m_depth = DEFAULT_DEPTH;
-    m_minConfidence = DEFAULT_MIN_CONFIDENCE;
-    m_threads = std::thread::hardware_concurrency();
-    m_prng = "glibc-rand";
-    m_answers = new std::vector<std::vector<Seed>* >(m_threads);
-    m_status = new std::vector<uint32_t>(m_threads);
+    if (isSupportedPRNG(prng))
+    {
+        m_isCompleted = new std::atomic<bool>(false);
+        m_isRunning = new std::atomic<bool>(false);
+        m_isStarting = new std::atomic<bool>(false);
+        m_observedOutputs = new std::vector<uint32_t>(observationSize);
+        m_depth = DEFAULT_DEPTH;
+        m_minConfidence = DEFAULT_MIN_CONFIDENCE;
+        m_threads = std::thread::hardware_concurrency();
+        m_prng = prng;
+        m_answers = new std::vector<std::vector<Seed>* >(m_threads);
+        m_status = new std::vector<uint32_t>(m_threads);
+    }
 }
 
 Untwister::~Untwister()
@@ -350,14 +356,14 @@ std::vector<uint32_t>* Untwister::getStatus()
     throw std::runtime_error("Bruteforce is not running, no status");
 }
 
-std::vector<std::string> Untwister::getSupportedPRNGs()
+static std::vector<std::string>* Untwister::getSupportedPRNGs()
 {
     PRNGFactory factory;
     return factory.getNames();
 }
 
 
-void Untwister::setPRNG(std::string prng)
+static void Untwister::setPRNG(std::string prng)
 {
     if (isSupportedPRNG(prng))
     {
@@ -369,7 +375,7 @@ void Untwister::setPRNG(std::string prng)
     }
 }
 
-void Untwister::setPRNG(char *prng)
+static void Untwister::setPRNG(char *prng)
 {
     setPRNG(std::string(prng));
 }
@@ -387,7 +393,7 @@ bool Untwister::isSupportedPRNG(char *prng)
 bool Untwister::isSupportedPRNG(std::string prng)
 {
     std::vector<std::string> names = getSupportedPRNGs();
-    return std::find(names.begin(), names.end(), prng) == names.end() ? false:true;
+    return std::find(names.begin(), names.end(), prng) != names.end() ? true:false;
 }
 
 uint32_t Untwister::getStateSize()
@@ -411,7 +417,7 @@ void Untwister::setThreads(unsigned int threads)
     }
 }
 
-unsigned int Untwister::getThreads()
+static unsigned int Untwister::getThreads()
 {
     return m_threads;
 }
@@ -444,4 +450,9 @@ std::atomic<bool>* Untwister::getIsCompleted()
 std::atomic<bool>* Untwister::getIsRunning()
 {
     return m_isRunning;
+}
+
+const std::string Untwister::getVersion()
+{
+    return VERSION;
 }

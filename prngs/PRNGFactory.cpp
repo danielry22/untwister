@@ -12,6 +12,7 @@ PRNGFactory::PRNGFactory()
     library[GLIBC_RAND] = &create<GlibcRand>;
     library[MT19937] = &create<Mt19937>;
     library[RUBY_RAND] = &create<Ruby>;
+    library[WPRAND] = &create<WPRand>;
 }
 
 PRNGFactory::~PRNGFactory() {}
@@ -22,9 +23,9 @@ PRNG* PRNGFactory::getInstance(std::string name)
     return library[name]();
 }
 
-std::vector<std::string> PRNGFactory::getNames()
+std::vector<std::string>* PRNGFactory::getNames()
 {
-    std::vector<std::string> names;
+    std::vector<std::string> names = new std::vector<std::string>();
     for (PRNGLibrary::iterator iter = library.begin(); iter != library.end(); ++iter)
     {
         names.push_back(iter->first);
