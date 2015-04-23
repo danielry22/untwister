@@ -56,9 +56,10 @@ void Usage()
     }
     delete names;
     std::cout << "\t-u\n\t\tUse bruteforce, but only for unix timestamp values within a range of +/- 1 " << std::endl;
-    std::cout << "\t-b\n\t\tAlways bruteforce, even if state inference attack is successful" << std::endl;
     std::cout << "\t\tyear from the current time." << std::endl;
-    std::cout << "\t-g <seed>\n\t\tGenerate a test set of random numbers from the given seed (at a random depth)" << std::endl;
+    std::cout << "\t-b\n\t\tAlways bruteforce, even if state inference attack is successful" << std::endl;
+    std::cout << "\t-g <seed>\n\t\tGenerate a test set of random numbers from the given seed"  << std::endl;
+    std::cout << "\t-D <depth>\n\t\tThe quantity of random numbers to generate when using the -g flag (default 20)" << std::endl;
     std::cout << "\t-c <confidence>\n\t\tSet the minimum confidence percentage to report" << std::endl;
     std::cout << "\t-t <threads>\n\t\tSpawn this many threads (default is " << std::thread::hardware_concurrency() << ")" << std::endl;
     std::cout << std::endl;
@@ -195,18 +196,27 @@ int main(int argc, char *argv[])
     uint32_t lowerBoundSeed = 0;
     uint32_t upperBoundSeed = UINT_MAX;
     uint32_t seed = 0;
+    uint32_t generationDepth = 20;
     bool generateFlag = false;
     bool bruteforce = false;
     Untwister *untwister = new Untwister();
 
-    while ((c = getopt(argc, argv, "d:i:g:t:r:c:ubhv")) != -1)
+    while ((c = getopt(argc, argv, "D:d:i:g:t:r:c:ubh")) != -1)
     {
         switch (c)
         {
             case 'g':
             {
-                seed = strtoul(optarg, NULL, 10);
+                if(optarg != NULL)
+                {
+                    seed = strtoul(optarg, NULL, 10);
+                }
                 generateFlag = true;
+                break;
+            }
+            case 'D':
+            {
+                generationDepth = strtoul(optarg, NULL, 10);
                 break;
             }
             case 'u':
@@ -328,18 +338,7 @@ int main(int argc, char *argv[])
     if (generateFlag)
     {
         std::vector<uint32_t> results;
-        if(untwister->getObservedOutputs()->empty())
-        {
-            results = untwister->generateSampleFromSeed(seed);
-        }
-        else
-        {
-            results = untwister->generateSampleFromState();
-        }
-        for (unsigned int index = 0; index < results.size(); ++index)
-        {
-            std::cout << results.at(index) << std::endl;
-        }
+        untwister->generateSampleFromSeed(generationDepth, seed);
     }
     else if (untwister->getObservedOutputs()->empty())
     {
