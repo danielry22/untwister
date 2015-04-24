@@ -259,7 +259,7 @@ void SHA1::read(std::istream &is, std::string &s, int max)
     s.assign(sbuf, is.gcount());
 }
 
-std::string sha1(const std::string &string)
+std::string rawdigest(const std::string &string)
 {
     SHA1 checksum;
     checksum.update(string);

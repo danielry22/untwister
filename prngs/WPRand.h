@@ -62,6 +62,9 @@ static const std::string WPRAND = "WPRand";
 static const uint32_t WPRAND_STATE_SIZE = 624;
 static const uint32_t MIN_RND_LENGTH = 8;
 
+/* For now just assume the PHP_INT_MAX check fails for now */
+static const uint32_t MAX_RANDOM_NUMBER = 0xffffffff;
+
 class WPRand: public PRNG
 {
 public:
@@ -86,7 +89,7 @@ public:
     bool reverseToSeed(uint32_t *, uint32_t);
 
 private:
-    std::string m_php_uniqid();
+    std::string m_phpUniqid();
     uint32_t m_seedValue;
     std::string m_rndValue;
     PHP_mt19937 *m_php_mt;

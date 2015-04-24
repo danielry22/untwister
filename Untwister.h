@@ -34,7 +34,7 @@
 typedef std::pair<uint32_t, double> Seed;
 typedef std::pair<std::vector<uint32_t>, double> State;
 
-static const std::string VERSION = "0.2.0";
+static const std::string VERSION = "0.2.1";
 static const uint32_t DEFAULT_DEPTH = 1000;
 static const double DEFAULT_MIN_CONFIDENCE = 100.0;
 

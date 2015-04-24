@@ -114,19 +114,19 @@ void DisplayProgress(Untwister *untwister, uint32_t totalWork)
                   << " Progress: " << std::fixed<< percent << '%'
                   << "  [" << sum << " / " << totalWork << "]"
                   << "  ~" << seedsPerSec << "/sec ";
-        if (yearsLeft > 0)
+        if (0 < yearsLeft)
         {
             std::cout << " " << yearsLeft << " years";
         }
-        if (daysLeft > 0)
+        if (0 < daysLeft)
         {
             std::cout << " " << daysLeft << " days";
         }
-        if (hoursLeft > 0)
+        if (0 < hoursLeft)
         {
             std::cout << " " << hoursLeft << " hours";
         }
-        if (minutesLeft > 0)
+        if (0 < minutesLeft)
         {
             std::cout << " " << minutesLeft << " minutes";
         }
