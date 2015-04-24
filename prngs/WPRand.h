@@ -48,10 +48,10 @@ function wp_rand( $min = 0, $max = 0 ) {
 #ifndef WPRAND_H_
 #define WPRAND_H_
 
-#include <cstdlib>
-#include <climits>
 #include <string>
 #include <random>
+#include <climits>
+#include <sys/time.h>
 
 #include "PRNG.h"
 #include "PHP_mt19937.h"
@@ -77,7 +77,7 @@ public:
     uint32_t random(void);
 
     uint32_t getStateSize(void);
-    void setState(std::vector<uint32_t>);
+    void setState(std::vector<uint32_t> inState);
     std::vector<uint32_t> getState(void);
 
     void setEvidence(std::vector<uint32_t>);
@@ -88,11 +88,13 @@ public:
 
     bool reverseToSeed(uint32_t *, uint32_t);
 
+    /* wp_rand specific methods */
+    std::string m_phpUniqid(std::string entropy);
+
 private:
-    std::string m_phpUniqid();
     uint32_t m_seedValue;
     std::string m_rndValue;
-    PHP_mt19937 *m_php_mt;
+    PHP_mt19937 *m_phpMt;
 };
 
 #endif /* WPRAND_H_ */

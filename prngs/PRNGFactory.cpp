@@ -15,7 +15,10 @@ PRNGFactory::PRNGFactory()
     library[PHP_MT_RAND] = &create<PHP_mt19937>;
 }
 
-PRNGFactory::~PRNGFactory() {}
+PRNGFactory::~PRNGFactory()
+{
+    /* Blank */
+}
 
 PRNG* PRNGFactory::getInstance(std::string name)
 {

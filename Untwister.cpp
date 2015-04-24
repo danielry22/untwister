@@ -63,9 +63,12 @@ Untwister::~Untwister()
 }
 
 /*
- isStarting: The call to bruteforce() has occured but all workers threads have not started yet
-  isRunning: All threads have started and it is safe to call getStatus() externally
-isCompleted: The operation has completed and all worker threads have joined
+
+    This is the fairly straight-forward just TRY ALL THE SEEDS attack.
+
+     isStarting: The call to bruteforce() has occured but all workers threads have not started yet
+      isRunning: All threads have started and it is safe to call getStatus() externally
+    isCompleted: The operation has completed and all worker threads have joined
 */
 std::vector<Seed> Untwister::bruteforce(uint32_t lowerBoundSeed, uint32_t upperBoundSeed)
 {

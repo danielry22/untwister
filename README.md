@@ -1,7 +1,7 @@
 Untwister
 =========
 
-Multi-threaded seed recovery tool for common PRNGs.
+Multi-threaded seed/state recovery tool for common PRNGs; Untwister can recover the internal state or the original seed of a remote application's insecure PRNG using observered values.
 
 
 Supported PRNGs
@@ -9,6 +9,8 @@ Supported PRNGs
 * Glibc's rand()
 * Mersenne Twister (MT19937)
 * Ruby's MT-variant DEFAULT::rand()
+* PHP's MT-variant mt_rand
+* Wordpress' custom wp_rand
 
 Usage
 ========
