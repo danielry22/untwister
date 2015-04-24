@@ -337,7 +337,7 @@ static std::vector<std::string>* Untwister::getSupportedPRNGs()
 }
 
 
-static void Untwister::setPRNG(std::string prng)
+void Untwister::setPRNG(std::string prng)
 {
     if (isSupportedPRNG(prng))
     {
@@ -349,7 +349,7 @@ static void Untwister::setPRNG(std::string prng)
     }
 }
 
-static void Untwister::setPRNG(char *prng)
+void Untwister::setPRNG(char *prng)
 {
     setPRNG(std::string(prng));
 }

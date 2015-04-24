@@ -239,8 +239,7 @@ void SHA1::transform(uint32 block[BLOCK_BYTES])
     /* Count the number of transformations */
     transforms++;
 }
- 
- 
+
 void SHA1::buffer_to_block(const std::string &buffer, uint32 block[BLOCK_BYTES])
 {
     /* Convert the std::string (byte buffer) to a uint32 array (MSB) */
@@ -252,16 +251,14 @@ void SHA1::buffer_to_block(const std::string &buffer, uint32 block[BLOCK_BYTES])
                    | (buffer[4*i+0] & 0xff)<<24;
     }
 }
- 
- 
+
 void SHA1::read(std::istream &is, std::string &s, int max)
 {
     char sbuf[max];
     is.read(sbuf, max);
     s.assign(sbuf, is.gcount());
 }
- 
- 
+
 std::string sha1(const std::string &string)
 {
     SHA1 checksum;

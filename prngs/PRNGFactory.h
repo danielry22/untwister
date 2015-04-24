@@ -16,6 +16,7 @@
 #include "GlibcRand.h"
 #include "Ruby.h"
 #include "PHP_mt19937.h"
+#include "WPRand.h"
 
 /* Template to bind constructor to mapped string */
 template<typename T> PRNG* create() { return new T; }
@@ -28,7 +29,7 @@ public:
     virtual ~PRNGFactory();
 
     PRNG* getInstance(std::string);
-    std::vector<std::string> getNames(void);
+    std::vector<std::string>* getNames(void);
 
 private:
     PRNGLibrary library;

@@ -38,9 +38,9 @@ uint32_t PHP_mt19937::random()
 
 void PHP_mt19937::php_mt_initialize(uint32_t seed)
 {
-    register uint32_t *s = m_state;
-    register uint32_t *r = m_state;
-    register int i = 1;
+    uint32_t *s = m_state;
+    uint32_t *r = m_state;
+    int i = 1;
 
     *s++ = seed & 0xffffffffU;
     for( ; i < N; ++i ) {
@@ -51,9 +51,9 @@ void PHP_mt19937::php_mt_initialize(uint32_t seed)
 
 void PHP_mt19937::php_mt_reload()
 {
-    register uint32_t *state = m_state;
-    register uint32_t *p = state;
-    register int i;
+    uint32_t *state = m_state;
+    uint32_t *p = state;
+    int i;
 
     for (i = N - M; i--; ++p)
         *p = php_twist(p[M], p[0], p[1]);
@@ -69,7 +69,7 @@ uint32_t PHP_mt19937::genrand_int32(struct MT *mt)
     /* Pull a 32-bit integer from the generator state
        Every other access function simply transforms the numbers extracted here */
 
-    register uint32_t s1;
+    uint32_t s1;
 
     if (m_left == 0) {
         php_mt_reload();

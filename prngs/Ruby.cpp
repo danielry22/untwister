@@ -14,7 +14,7 @@ Ruby::Ruby()
     init_genrand(m_mt, seedValue);
 }
 
-Ruby::~Ruby() 
+Ruby::~Ruby()
 {
     delete m_mt;
     m_mt = NULL;
