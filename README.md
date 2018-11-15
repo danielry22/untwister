@@ -3,6 +3,11 @@ Untwister
 
 Multi-threaded seed recovery tool for common PRNGs.
 
+F5 Edition
+===========
+
+Coming soon, work in progress code available in `f5/`
+
 
 Supported PRNGs
 =================
