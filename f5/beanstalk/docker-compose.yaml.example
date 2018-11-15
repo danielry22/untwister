@@ -1,0 +1,11 @@
+version: '3'
+services:
+    untwister:
+        build: ./project/
+        environment:
+            - AWS_ACCESS_KEY_ID=FOO
+            - AWS_SECRET_ACCESS_KEY=BAR
+            - AWS_DEFAULT_REGION=us-west-2
+            - S3_BUCKET_NAME=
+        ports:
+            - "80:80"
