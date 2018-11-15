@@ -73,6 +73,7 @@ void Usage(Untwister *untwister)
 
 void DisplayProgress(Untwister *untwister, uint64_t totalWork)
 {
+
     std::atomic<bool>* isStarting = untwister->getIsStarting();
     while (isStarting->load(std::memory_order_relaxed))
     {
@@ -175,30 +176,51 @@ bool inferenceAttack(Untwister *untwister)
     }
 }
 
-void bruteforceAttack(Untwister *untwister, int64_t lowerBoundSeed, int64_t upperBoundSeed)
+bool bruteforceAttack(bool quiet, Untwister *untwister, int64_t lowerBoundSeed, int64_t upperBoundSeed)
 {
-    std::cout << INFO << "Looking for seed using " << BOLD << untwister->getPRNG() << RESET << std::endl;
-    std::cout << INFO << "Spawning " << untwister->getThreads() << " worker thread(s) ..." << std::endl;
+    if (!quiet)
+    {
+        std::cout << INFO << "Looking for seed using " << BOLD << untwister->getPRNG() << RESET << std::endl;
+        std::cout << INFO << "Spawning " << untwister->getThreads() << " worker thread(s) ..." << std::endl;
+    }
 
     steady_clock::time_point elapsed = steady_clock::now();
-    std::thread progressThread(DisplayProgress, untwister, upperBoundSeed - lowerBoundSeed);
-
-    auto results = untwister->bruteforce(lowerBoundSeed, upperBoundSeed);
-
-    progressThread.join();
+    
+    std::vector<Seed> results;
+    if (quiet)
+    {
+        results = untwister->bruteforce(lowerBoundSeed, upperBoundSeed);
+    }
+    else
+    {
+        std::thread progressThread(DisplayProgress, untwister, upperBoundSeed - lowerBoundSeed);
+        results = untwister->bruteforce(lowerBoundSeed, upperBoundSeed);
+        progressThread.join();
+    }
 
     /* Total time elapsed */
-    std::cout << INFO << "Completed in "
-              << duration_cast<seconds>(steady_clock::now() - elapsed).count()
-              << " second(s)" << std::endl;
+    if (!quiet)
+    {
+        std::cout << INFO << "Completed in "
+                << duration_cast<seconds>(steady_clock::now() - elapsed).count()
+                << " second(s)" << std::endl;
+    }
 
     /* Display results */
     for (unsigned int index = 0; index < results.size(); ++index)
     {
-        std::cout << SUCCESS << "Found seed " << results[index].first
-                  << " with a confidence of " << results[index].second
-                  << '%' << std::endl;
+        if (quiet)
+        {
+            std::cout << results[index].first << std::endl;
+        }
+        else
+        {
+            std::cout << SUCCESS << "Found seed " << results[index].first
+                    << " with a confidence of " << results[index].second
+                    << '%' << std::endl;
+        }
     }
+    return results.size() ? true:false;
 }
 
 int main(int argc, char *argv[])
@@ -218,9 +240,10 @@ int main(int argc, char *argv[])
     bool boundedMaxFlag = false;
     bool generateFlag = false;
     bool bruteforce = false;
+    bool quiet = false;
     Untwister *untwister = new Untwister();
 
-    while ((c = getopt(argc, argv, "s:S:m:M:D:d:i:g:t:r:c:ubh")) != -1)
+    while ((c = getopt(argc, argv, "s:S:m:M:D:d:i:g:t:r:c:qubh")) != -1)
     {
         switch (c)
         {
@@ -272,6 +295,11 @@ int main(int argc, char *argv[])
             case 'b':
             {
                 bruteforce = true;
+                break;
+            }
+            case 'q':
+            {
+                quiet = true;
                 break;
             }
             case 'r':
@@ -444,7 +472,10 @@ int main(int argc, char *argv[])
     /* Perform inference attack. Skip it if we're bounded or it was manually skipped */
     if ((boundedMaxFlag && boundedMinFlag) || bruteforce)
     {
-        std::cout << INFO << "Skipping inference attack..." << std::endl;
+        if (!quiet)
+        {
+            std::cout << INFO << "Skipping inference attack..." << std::endl;
+        }
     }
     else
     {
@@ -454,14 +485,14 @@ int main(int argc, char *argv[])
     /* Give warning about large seed space */
     if((!boundedMaxFlag || !boundedMinFlag) && (untwister->getPRNG() == "java"))
     {
-        std::cout << WARN << "WARNING: Java Random() seeds are 64 bit signed integers. (Though technically they only" <<
+        std::cerr << WARN << "WARNING: Java Random() seeds are 64 bit signed integers. (Though technically they only" <<
         " use 48 bits of it.) Anyway, trying to brute force through all possible seeds will probably never finish. " <<
         "Consider using -s or -S to restrict the seed space to something more reasonable. For instance, Java by" <<
         " default seeds the PRNG with the current system timestamp in milliseconds." <<
         " IE: System.currentTimeMillis()" << std::endl;
     }
 
-    bruteforceAttack(untwister, lowerBoundSeed, upperBoundSeed);
+    bool success = bruteforceAttack(quiet, untwister, lowerBoundSeed, upperBoundSeed);
     delete untwister;
-    return EXIT_SUCCESS;
+    return success ? EXIT_SUCCESS : EXIT_FAILURE;
 }
